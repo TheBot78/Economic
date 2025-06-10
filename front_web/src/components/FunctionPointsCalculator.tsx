@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ProjectType, FPComponent, Complexity, FPComponents } from '../types/types';
 
 const DEFAULT_FP_COMPONENTS: FPComponents = {
@@ -14,6 +14,10 @@ const PROJECT_TYPES: ProjectType[] = ['organic', 'semi-detached', 'embedded'];
 export default function FunctionPointsCalculator() {
   const [projectType, setProjectType] = useState<ProjectType>('organic');
   const [fpComponents, setFpComponents] = useState<FPComponents>(DEFAULT_FP_COMPONENTS);
+  const [estimatedEffort, setEstimatedEffort] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [canCalculate, setCanCalculate] = useState(false);
 
   const handleInputChange = (component: FPComponent, complexity: Complexity, value: string) => {
     const numValue = parseInt(value) || 0;
@@ -26,9 +30,59 @@ export default function FunctionPointsCalculator() {
     }));
   };
 
-  const calculateFunctionPoints = () => {
-    // À implémenter plus tard
-    alert('Calculation will be implemented soon!');
+  // Vérifie si au moins une valeur est > 0
+  useEffect(() => {
+    const hasNonZero = Object.values(fpComponents).some(
+      comp => comp.simple > 0 || comp.medium > 0 || comp.complex > 0
+    );
+    setCanCalculate(hasNonZero);
+  }, [fpComponents]);
+
+  const calculateFunctionPoints = async () => {
+    setLoading(true);
+    setError(null);
+    setEstimatedEffort(null);
+
+    try {
+      const cleanedFpComponents = Object.fromEntries(
+        Object.entries(fpComponents).map(([comp, values]) => [
+          comp,
+          {
+            simple: Number(values.simple) || 0,
+            medium: Number(values.medium) || 0,
+            complex: Number(values.complex) || 0
+          }
+        ])
+      );
+
+      const body = {
+        projectType,
+        fpComponents: cleanedFpComponents
+      };
+
+      const response = await fetch('http://localhost:5000/api/estimate-comoco', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+      }
+
+      const data = await response.json();
+
+      if (data.estimatedEffort !== undefined) {
+        setEstimatedEffort(data.estimatedEffort.toString());
+      } else {
+        setError('No estimatedEffort found in response.');
+      }
+    } catch (err) {
+      setError(`Request failed: ${err instanceof Error ? err.message : String(err)}`);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -38,10 +92,10 @@ export default function FunctionPointsCalculator() {
           <button
             key={type}
             onClick={() => setProjectType(type)}
-            className={`px-4 py-2 rounded-md ${
+            className={`px-4 py-2 rounded-md border-2 transition-all ${
               projectType === type
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-200 hover:bg-gray-300'
+                ? 'bg-white border-blue-600 text-blue-600 scale-105 font-semibold'
+                : 'bg-gray-200 border-transparent text-gray-800 hover:bg-gray-300'
             }`}
           >
             {type} ({type === 'organic' ? '2-50' : type === 'semi-detached' ? '50-300' : '+300'})
@@ -68,9 +122,10 @@ export default function FunctionPointsCalculator() {
                     <input
                       type="number"
                       min="0"
-                      value={fpComponents[component][complexity]}
+                      value={fpComponents[component][complexity] === 0 ? '' : fpComponents[component][complexity]}
                       onChange={(e) => handleInputChange(component, complexity, e.target.value)}
                       className="w-20 px-2 py-1 border rounded text-center"
+                      placeholder="0"
                     />
                   </td>
                 ))}
@@ -82,10 +137,27 @@ export default function FunctionPointsCalculator() {
 
       <button
         onClick={calculateFunctionPoints}
-        className="px-6 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+        disabled={!canCalculate || loading}
+        className={`px-6 py-3 rounded-md text-white transition-colors ${
+          !canCalculate || loading
+            ? 'bg-gray-400 cursor-not-allowed'
+            : 'bg-green-600 hover:bg-green-700'
+        }`}
       >
-        Calculate Function Points
+        {loading ? 'Calculating...' : 'Calculate Function Points'}
       </button>
+
+      {estimatedEffort && (
+        <p className="mt-4 text-xl font-semibold text-green-700">
+          Estimated Effort: {estimatedEffort}
+        </p>
+      )}
+
+      {error && (
+        <p className="mt-4 text-xl font-semibold text-red-600">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
