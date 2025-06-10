@@ -1,5 +1,6 @@
 import { ResultsDisplayProps } from '../types/types';
 import FunctionPointsCalculator from './FunctionPointsCalculator';
+import HeuristicEstimationCalculator from './HeuristicEstimationCalculator';
 
 export default function ResultsDisplay({ category }: ResultsDisplayProps) {
   if (!category) {
@@ -16,6 +17,8 @@ export default function ResultsDisplay({ category }: ResultsDisplayProps) {
       
       {category.name === 'Empirical Estimation' && category.methods.includes('Function Points') ? (
         <FunctionPointsCalculator />
+      ) : category.name === 'Heuristic Estimation' && category.methods.includes('Delphi Method') ? (
+        <HeuristicEstimationCalculator />
       ) : (
         <ul className="space-y-3">
           {category.methods.map((method, index) => (

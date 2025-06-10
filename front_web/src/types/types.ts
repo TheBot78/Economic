@@ -1,8 +1,8 @@
 export type ProjectType = 'organic' | 'semi-detached' | 'embedded';
 
-export type Complexity = 'simple' | 'medium' | 'complex';
-
 export type FPComponent = 'EI' | 'EO' | 'EQ' | 'ILF' | 'EIF';
+
+export type Complexity = 'simple' | 'medium' | 'complex';
 
 export interface FPComponents {
   [key: string]: {
@@ -12,13 +12,18 @@ export interface FPComponents {
   };
 }
 
-export interface FunctionPointsData {
-  projectType: ProjectType;
-  fpComponents: FPComponents;
-}
-
 export interface Category {
   id: string;
   name: string;
   methods: string[];
+}
+
+export interface ResultsDisplayProps {
+  category: Category | null;
+}
+
+export interface CategoryButtonProps {
+  category: Category;
+  isSelected: boolean;
+  onClick: () => void;
 }
