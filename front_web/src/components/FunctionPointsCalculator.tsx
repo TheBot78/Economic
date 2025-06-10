@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ProjectType, FPComponent, Complexity, FPComponents } from '../types/types';
+import ProjectTypeButton from './ProjectTypeButton';
 
 const DEFAULT_FP_COMPONENTS: FPComponents = {
   EI: { simple: 0, medium: 0, complex: 0 },
@@ -89,17 +90,12 @@ export default function FunctionPointsCalculator() {
     <div className="space-y-6">
       <div className="flex gap-4">
         {PROJECT_TYPES.map(type => (
-          <button
+          <ProjectTypeButton
             key={type}
+            type={type}
+            isSelected={projectType === type}
             onClick={() => setProjectType(type)}
-            className={`px-4 py-2 rounded-md border-2 transition-all ${
-              projectType === type
-                ? 'bg-white border-blue-600 text-blue-600 scale-105 font-semibold'
-                : 'bg-gray-200 border-transparent text-gray-800 hover:bg-gray-300'
-            }`}
-          >
-            {type} ({type === 'organic' ? '2-50' : type === 'semi-detached' ? '50-300' : '+300'})
-          </button>
+          />
         ))}
       </div>
 
@@ -161,3 +157,4 @@ export default function FunctionPointsCalculator() {
     </div>
   );
 }
+l
