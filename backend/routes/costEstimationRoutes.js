@@ -2,6 +2,6 @@ const express = require('express');
 const router = express.Router();
 const { estimateCost } = require('../controllers/costEstimationController');
 
-router.post('/estimate-cost', estimateCost);
+router.post('/estimate-comoco', estimateCost);
 
 module.exports = router;
