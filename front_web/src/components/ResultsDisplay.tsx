@@ -1,4 +1,5 @@
 import { ResultsDisplayProps } from '../types/types';
+import FunctionPointsCalculator from './FunctionPointsCalculator';
 
 export default function ResultsDisplay({ category }: ResultsDisplayProps) {
   if (!category) {
@@ -11,14 +12,19 @@ export default function ResultsDisplay({ category }: ResultsDisplayProps) {
 
   return (
     <div className="bg-white p-8 rounded-xl shadow-md">
-      <h2 className="text-2xl font-bold mb-4">{category.name} Methods</h2>
-      <ul className="space-y-3">
-        {category.methods.map((method, index) => (
-          <li key={`${category.id}-${index}`} className="p-4 bg-gray-50 rounded-lg">
-            {method} <span className="text-blue-600">[Calculation will appear here]</span>
-          </li>
-        ))}
-      </ul>
+      <h2 className="text-2xl font-bold mb-6">{category.name} Methods</h2>
+      
+      {category.name === 'Empirical Estimation' && category.methods.includes('Function Points') ? (
+        <FunctionPointsCalculator />
+      ) : (
+        <ul className="space-y-3">
+          {category.methods.map((method, index) => (
+            <li key={`${category.id}-${index}`} className="p-4 bg-gray-50 rounded-lg">
+              {method} <span className="text-blue-600">[Calculation will appear here]</span>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
