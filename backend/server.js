@@ -10,10 +10,12 @@ app.use(express.json());
 const costEstimationRoutes = require('./routes/costEstimationRoutes');
 const budgetRoutes = require('./routes/budgetRoutes');
 const riskRoutes = require('./routes/riskRoutes');
+const resourceRoutes = require('./routes/resourceRoutes');
 
 app.use('/api/estimate', costEstimationRoutes);
 app.use('/api/budget', budgetRoutes);
 app.use('/api/risk', riskRoutes);
+app.use('/api/resources', resourceRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
