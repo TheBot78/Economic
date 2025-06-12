@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import CategoryButton from './components/CategoryButton';
 import ResultsDisplay from './components/ResultsDisplay';
 import BudgetingCostManagementCalculator from './components/BudgetingCostManagementCalculator';
+import RiskManagement from './components/risk/RiskManagement';
 import { Category } from './types/types';
 import { useAuth } from './context/AuthContext';
 import LoginPage from './login/login';
@@ -29,6 +30,7 @@ const CATEGORIES: Category[] = [
 export default function App() {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [isBudgetingPage, setIsBudgetingPage] = useState(false);
+  const [isRiskPage, setIsRiskPage] = useState(false);
   const { isAuthenticated, logout, login } = useAuth();
 
   useEffect(() => {
@@ -48,26 +50,63 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-8 flex flex-col items-center economics-estimation-calculator">
-      <div className="flex justify-between w-full max-w-6xl mb-4">
-        <button className="text-sm text-blue-600 hover:underline" onClick={logout}>
-          Logout
-        </button>
+      <div className="flex justify-between w-full max-w-6xl mb-4 items-center">
         <button
           className="text-sm text-blue-600 hover:underline"
-          onClick={() => {
-            setIsBudgetingPage(!isBudgetingPage);
-            setSelectedCategory(null); // Reset sélection si besoin
-          }}
+          onClick={logout}
         >
-          {isBudgetingPage ? 'Go to Economics Estimation' : 'Go to Budgeting & Cost Management'}
+          Logout
         </button>
+
+        <div className="flex space-x-4">
+          <button
+            className={`text-sm px-3 py-1 rounded ${
+              !isBudgetingPage && !isRiskPage ? 'bg-blue-600 text-white' : 'text-blue-600 hover:underline'
+            }`}
+            onClick={() => {
+              setIsBudgetingPage(false);
+              setIsRiskPage(false);
+              setSelectedCategory(null);
+            }}
+          >
+            Economics Estimation
+          </button>
+          <button
+            className={`text-sm px-3 py-1 rounded ${
+              isBudgetingPage ? 'bg-blue-600 text-white' : 'text-blue-600 hover:underline'
+            }`}
+            onClick={() => {
+              setIsBudgetingPage(true);
+              setIsRiskPage(false);
+              setSelectedCategory(null);
+            }}
+          >
+            Budgeting & Cost Management
+          </button>
+          <button
+            className={`text-sm px-3 py-1 rounded ${
+              isRiskPage ? 'bg-blue-600 text-white' : 'text-blue-600 hover:underline'
+            }`}
+            onClick={() => {
+              setIsRiskPage(true);
+              setIsBudgetingPage(false);
+              setSelectedCategory(null);
+            }}
+          >
+            Risk Management
+          </button>
+        </div>
       </div>
 
       <h1 className="text-3xl font-bold mb-8">
-        {isBudgetingPage ? 'Budgeting and Cost Management' : 'Economics Estimation Calculator'}
+        {isBudgetingPage
+          ? 'Budgeting and Cost Management'
+          : isRiskPage
+          ? 'Risk Management'
+          : 'Economics Estimation Calculator'}
       </h1>
 
-      {!isBudgetingPage && (
+      {!isBudgetingPage && !isRiskPage && (
         <>
           {/* Grille des boutons catégories */}
           <div className="category-button-grid grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-6xl">
@@ -90,6 +129,12 @@ export default function App() {
       {isBudgetingPage && (
         <div className="mt-8 w-full max-w-6xl">
           <BudgetingCostManagementCalculator />
+        </div>
+      )}
+
+      {isRiskPage && (
+        <div className="mt-8 w-full max-w-6xl">
+          <RiskManagement />
         </div>
       )}
     </div>
