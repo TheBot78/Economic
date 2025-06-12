@@ -1,15 +1,11 @@
 import { CategoryButtonProps } from '../types/types';
 
-export default function CategoryButton({ 
-  category, 
-  isSelected, 
-  onClick 
-}: CategoryButtonProps) {
-  const baseClasses = "w-full p-8 rounded-xl text-2xl font-bold transition-all shadow-lg hover:shadow-xl border-4";
+export default function CategoryButton({ category, isSelected, onClick }: CategoryButtonProps) {
+  const baseClasses =
+    'w-full p-8 rounded-xl text-2xl font-bold transition-all shadow-lg hover:shadow-xl border-4';
 
-  // Inline style for border color to debug
   const borderColorStyle = {
-    borderColor: isSelected ? '#2563EB' /* blue-600 */ : 'transparent'
+    borderColor: isSelected ? '#2563EB' /* blue-600 */ : 'transparent',
   };
 
   const selectedClasses = isSelected

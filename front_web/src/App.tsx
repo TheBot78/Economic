@@ -1,34 +1,61 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import CategoryButton from './components/CategoryButton';
 import ResultsDisplay from './components/ResultsDisplay';
 import { Category } from './types/types';
+import { useAuth } from './context/AuthContext';
+import LoginPage from './login/login';
+
+import './EconomicsEstimationCalculator.css';
 
 const CATEGORIES: Category[] = [
   {
     id: 'empirical',
     name: 'Empirical Estimation',
-    methods: ['COCOMO', 'Function Points']
+    methods: ['COCOMO', 'Function Points'],
   },
   {
     id: 'heuristic',
     name: 'Heuristic Estimation',
-    methods: ['Expert Judgment', 'Delphi Method']
+    methods: ['Expert Judgment', 'Delphi Method'],
   },
   {
     id: 'analytical',
     name: 'Analytical Mathematical Models',
-    methods: ['Regression Analysis']
-  }
+    methods: ['Regression Analysis'],
+  },
 ];
 
 export default function App() {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const { isAuthenticated, logout, login } = useAuth();
+
+  useEffect(() => {
+    const storedLogin = localStorage.getItem('isAuthenticated');
+    if (storedLogin === 'true') {
+      login();
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('isAuthenticated', isAuthenticated ? 'true' : 'false');
+  }, [isAuthenticated]);
+
+  if (!isAuthenticated) {
+    return <LoginPage />;
+  }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8 flex flex-col">
+    <div className="min-h-screen bg-gray-100 p-8 flex flex-col items-center economics-estimation-calculator">
+      <div className="flex justify-end w-full max-w-6xl mb-4">
+        <button className="text-sm text-blue-600 hover:underline" onClick={logout}>
+          Logout
+        </button>
+      </div>
+
       <h1 className="text-3xl font-bold mb-8">Economics Estimation Calculator</h1>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl">
+
+      {/* Grille des boutons catégories */}
+      <div className="category-button-grid grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-6xl">
         {CATEGORIES.map((category) => (
           <CategoryButton
             key={category.id}
