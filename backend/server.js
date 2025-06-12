@@ -8,7 +8,10 @@ app.use(cors());
 app.use(express.json());
 
 const costEstimationRoutes = require('./routes/costEstimationRoutes');
+const budgetRoutes = require('./routes/budgetRoutes');
+
 app.use('/api/estimate', costEstimationRoutes);
+app.use('/api/budget', budgetRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
