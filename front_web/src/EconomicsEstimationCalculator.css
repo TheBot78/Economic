@@ -1,0 +1,27 @@
+/* EconomicsEstimationCalculator.css */
+
+/* styles limités à la page Economics Estimation Calculator */
+
+/* inputs type number plus petits */
+.economics-estimation-calculator input[type='number'] {
+  width: 3.5rem;
+}
+
+/* Grille des boutons catégories */
+.economics-estimation-calculator .category-button-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem; /* espace entre boutons */
+}
+
+/* Reset marges des boutons dans cette grille pour que gap fonctionne bien */
+.economics-estimation-calculator .category-button-grid button {
+  margin: 0;
+  width: 100%;
+  display: block;
+}
+
+/* Optionnel: ajouter un peu de marge verticale pour wrapping */
+.economics-estimation-calculator .category-button-grid button + button {
+  margin-top: 0;
+}
